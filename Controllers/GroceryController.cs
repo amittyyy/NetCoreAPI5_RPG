@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using NetCoreAPI5.Models;
+using NetCoreAPI5.Services.GroceryService;
+using System.Threading.Tasks;
+using NetCoreAPI5.Dtos.Grocery;
 
 namespace NetCoreAPI5.Controllers
 {
@@ -11,30 +14,53 @@ namespace NetCoreAPI5.Controllers
     [Route("[controller]")]
     public class GroceryController : ControllerBase
     {
-        private static GrocerySet grocery = new GrocerySet();
-        private static List<GrocerySet> groceryList = new List<GrocerySet>(){
-            new GrocerySet(),
-            new GrocerySet {Id = 1, Name = "Garlic", SprintDate = DateTime.Today}
-        };
+        private readonly IGroceryService _groceryService;
+
+        public GroceryController(IGroceryService groceryService)
+        {
+            _groceryService = groceryService;
+        }
 
         [HttpGet("{id}")]       
-        public ActionResult<GrocerySet> Get(int id)
+        public async Task<ActionResult<ServiceResponse<GetGroceryDto>>> Get(int id)
         {
-            return Ok(groceryList.FirstOrDefault(c => c.Id == id));
+            return Ok(await _groceryService.GetGroceryById(id));
         }
 
         [HttpGet]
         [Route("GetAll")]
-        public ActionResult <List<GrocerySet>> GetAll()
+        public async Task<ActionResult<ServiceResponse<List<GetGroceryDto>>>> GetAll()
         {
-            return Ok(groceryList);
+            return Ok(await _groceryService.GetAll());
         }
 
         [HttpPost]
-        public ActionResult<List<GrocerySet>> AddGrocery(GrocerySet grocerySet)
+        public async Task<ActionResult<ServiceResponse<List<GetGroceryDto>>>> AddGrocery(AddGroceryDto grocerySet)
+        {            
+            return Ok(await _groceryService.AddGrocery(grocerySet));
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<ServiceResponse<GetGroceryDto>>> UpdateGrocerySet(UpdateGroceryDto updatedGroceryDto)
         {
-            groceryList.Add(grocerySet);
-            return Ok(groceryList);
+            var response = await _groceryService.UpdateGrocery(updatedGroceryDto);
+            if(response.Data == null)
+            {
+                return NotFound(response);
+            }
+            
+            return Ok(response);      
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<List<GetGroceryDto>>> DeleteGrocery(int id)
+        {
+            var response = await _groceryService.DeleteGrocery(id);
+            if(response.Data == null)
+            {
+                return NotFound(response);
+            }
+            return Ok(response);
         }
 
     }

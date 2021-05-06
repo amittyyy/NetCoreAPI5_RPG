@@ -21,6 +21,17 @@ namespace NetCoreAPI5
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                })
+
+                .ConfigureLogging(logBuilder =>
+                {
+                    logBuilder.ClearProviders(); //Removes all providers from loggerFactory
+
+                    logBuilder.AddConsole();
+                    logBuilder.AddDebug();
+                    logBuilder.AddEventLog();
+                    logBuilder.AddEventSourceLogger();
+                    logBuilder.AddTraceSource("Information, ActivityTracing"); //Add Trace Listner provider
                 });
     }
 }

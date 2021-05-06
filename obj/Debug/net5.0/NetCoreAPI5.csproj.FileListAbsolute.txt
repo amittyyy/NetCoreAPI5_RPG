@@ -27,3 +27,5 @@ E:\DotNetApps\NetAPI31RPG\NetCoreAPI5\bin\Debug\net5.0\Swashbuckle.AspNetCore.Sw
 E:\DotNetApps\NetAPI31RPG\NetCoreAPI5\bin\Debug\net5.0\Swashbuckle.AspNetCore.SwaggerUI.dll
 E:\DotNetApps\NetAPI31RPG\NetCoreAPI5\obj\Debug\net5.0\NetCoreAPI5.MvcApplicationPartsAssemblyInfo.cs
 E:\DotNetApps\NetAPI31RPG\NetCoreAPI5\obj\Debug\net5.0\NetCoreAPI5.csproj.CopyComplete
+E:\DotNetApps\NetAPI31RPG\NetCoreAPI5\bin\Debug\net5.0\AutoMapper.dll
+E:\DotNetApps\NetAPI31RPG\NetCoreAPI5\bin\Debug\net5.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll

@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NetCoreAPI5.Services.GroceryService;
 
 namespace NetCoreAPI5
 {
@@ -28,11 +29,20 @@ namespace NetCoreAPI5
 
             services.AddControllers();
             services.AddSwaggerGen();
+
+            services.AddAutoMapper(typeof(Startup));
+            services.AddScoped<IGroceryService, GroceryService>();
+
+            
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
+
+            //Log file creattion
+            // loggerFactory.AddFile("Logs/AppLog-{date}.txt");     
             
             if (env.IsDevelopment())
             {
@@ -54,7 +64,7 @@ namespace NetCoreAPI5
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseAuthorization();            
 
             app.UseEndpoints(endpoints =>
             {
