@@ -48,4 +48,4 @@ Note:- Dependency Injection
         #install c# extension if not 
         # go to run and debugg and select .Net Core Attach
         # select <ProjectName>.exe 
-        # add debugging points and it workd
+        # add debugging points and it works.
