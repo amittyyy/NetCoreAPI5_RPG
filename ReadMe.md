@@ -37,3 +37,15 @@ Note:- Dependency Injection
             Cannot open server 'amity-dbserver' requested by the login. Client with IP address '72.80.238.99' is not allowed to access the server.  To enable access, use the           Windows Azure Managemen  t Portal or run sp_set_firewall_rule on the master database to create a firewall rule for this IP address or address range.  It may take up          to five minutes for this change to take effect. </font>
 
         - Solution:-  <font color="red"> Go to Azure Data and setup IP address by clicking 4th tab on top bar.</font>
+
+8. How to Connect Azure SQL Storage to MS SQL Database
+        #FUll database Connection
+        <a>Server=tcp:amity-dbserver.database.windows.net,1433;Initial Catalog=AmityTest;Persist Security Info=False;User ID=amitt;Password={your_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;</a>
+
+        go to sql, click connection icon, put server Name from above conntion string (server= "") and put username and password.
+
+9. How to debugg .NetCoreAPi in VS COde. 
+        #install c# extension if not 
+        # go to run and debugg and select .Net Core Attach
+        # select <ProjectName>.exe 
+        # add debugging points and it workd

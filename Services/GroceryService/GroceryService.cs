@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using NetCoreAPI5.Data;
 using NetCoreAPI5.Dtos.Grocery;
 using NetCoreAPI5.Models;
 
@@ -18,19 +20,21 @@ namespace NetCoreAPI5.Services.GroceryService
 
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
-        public GroceryService(IMapper mapper, ILogger<GroceryService> logger)
+        private readonly DataContext _context;
+        public GroceryService(IMapper mapper, ILogger<GroceryService> logger, DataContext context)
         {
             _mapper = mapper;
             _logger = logger;
+            _context = context;
         }
 
         public async Task<ServiceResponse<List<GetGroceryDto>>> AddGrocery(AddGroceryDto grocerySet)
         {
             var serviceResponse = new ServiceResponse<List<GetGroceryDto>>();
-            GrocerySet grocery = _mapper.Map<GrocerySet>(grocerySet);
-            grocery.Id = groceryList.Max(c => c.Id) + 1;
-            groceryList.Add(grocery);
-            serviceResponse.Data = groceryList.Select(c => _mapper.Map<GetGroceryDto>(c)).ToList();;
+            GrocerySet grocery = _mapper.Map<GrocerySet>(grocerySet); 
+            await _context.GrocerySets.AddAsync(grocery);           
+            await _context.SaveChangesAsync();
+            serviceResponse.Data = await _context.GrocerySets.Select(c => _mapper.Map<GetGroceryDto>(c)).ToListAsync();;
             return serviceResponse;
         }
 
@@ -39,9 +43,10 @@ namespace NetCoreAPI5.Services.GroceryService
             var serviceResponse = new ServiceResponse<List<GetGroceryDto>>();
             try
             {
-                GrocerySet grocery = groceryList.First(c => c.Id == id);
-                groceryList.Remove(grocery);
-                serviceResponse.Data = groceryList.Select(c => _mapper.Map<GetGroceryDto>(c)).ToList();
+                GrocerySet grocery = await _context.GrocerySets.FirstAsync(c => c.Id == id);                
+                _context.GrocerySets.Remove(grocery);
+                await _context.SaveChangesAsync();
+                serviceResponse.Data = await _context.GrocerySets.Select(c => _mapper.Map<GetGroceryDto>(c)).ToListAsync();
 
             }
              catch(Exception ex)
@@ -57,14 +62,17 @@ namespace NetCoreAPI5.Services.GroceryService
         public async Task<ServiceResponse<List<GetGroceryDto>>> GetAll()
         {
             var serviceResponse = new ServiceResponse<List<GetGroceryDto>>();
-            serviceResponse.Data = groceryList.Select(c => _mapper.Map<GetGroceryDto>(c)).ToList();
+            var dbGercerySet = await _context.GrocerySets.ToListAsync();
+            serviceResponse.Data = dbGercerySet.Select(c => _mapper.Map<GetGroceryDto>(c)).ToList();
             return serviceResponse;
         }
 
         public async Task<ServiceResponse<GetGroceryDto>> GetGroceryById(int id)
         {
             var serviceResponse = new ServiceResponse<GetGroceryDto>();
-            serviceResponse.Data = _mapper.Map<GetGroceryDto>(groceryList.FirstOrDefault(c => c.Id == id ));
+            var dbGrocery = await _context.GrocerySets.FirstOrDefaultAsync(c => c.Id == id);
+
+            serviceResponse.Data = _mapper.Map<GetGroceryDto>(dbGrocery);
             return serviceResponse;
         }
 
@@ -74,11 +82,12 @@ namespace NetCoreAPI5.Services.GroceryService
            var serviceResponse = new ServiceResponse<GetGroceryDto>();
            try
            {
-                GrocerySet grocerySet = groceryList.FirstOrDefault(c => c.Id == updateGroceryDto.Id);
+                GrocerySet grocerySet = await _context.GrocerySets.FirstOrDefaultAsync(c => c.Id == updateGroceryDto.Id);
 
                 grocerySet.Name = updateGroceryDto.Name;
                 grocerySet.SprintDate = updateGroceryDto.SprintDate;
 
+                await _context.SaveChangesAsync();
                 serviceResponse.Data = _mapper.Map<GetGroceryDto>(grocerySet);
            }
            catch(Exception ex)
